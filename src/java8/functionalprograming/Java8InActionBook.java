@@ -141,7 +141,7 @@ Chapter 5
         // same as
         numbers.stream().map((n) -> n * n).sum()
 
-        sumIteratively(), min(), max() etc use reduce() only internally.
+        sum(), sumIteratively(), min(), max() etc use reduce() only internally.
 
 
         Similarly, min and max can be done.
@@ -157,8 +157,10 @@ Chapter 5
         numbers.stream()        .map((n) -> n * n).reduce(100, (n1,n2) -> n1+n2);
         numbers.parallelStream().map((n) -> n * n).reduce(100, (n1,n2) -> n1+n2);
 
-        Sequential and Parallel operations will give different results, if initial value is not chosen carefully. Your code should be written in such a way that whatever works for Sequential should also work for Parallel processing.
-        Parallel processing works on ForkAndJoin algorithm of Java 7. It divides the input to many threads and each thread runs together using same initial value. So, think like thread 1 is adding values to 100, thread 2 is adding values to 100 and so on, eventually when threads are combined, result is created by adding many 100s instead of just one.
+        Sequential and Parallel operations will give different results, if initial value is not chosen carefully.
+        Your code should be written in such a way that whatever works for Sequential should also work for Parallel processing.
+        Parallel processing works on ForkAndJoin algorithm of Java 7. It divides the input to many threads and each thread runs together using same initial value.
+        So, think like thread 1 is adding values to 100, thread 2 is adding values to 100 and so on, eventually when threads are combined, result is created by adding many 100s instead of just one.
 
         Integer[] intArray = new Integer[] {1,2,3,4,5,6,7};
         Integer result = Arrays.stream(intArray).reduce(100, (n1, n2) -> n1 + n2);    // using sequential processing
@@ -183,7 +185,8 @@ Chapter 5
                     e.g. distinct() operation.
                         It is an intermediate operation that eliminates duplicates from the input sequence, i.e., it returns an output sequence with distinct elements.
                         In order to decide whether the next element is a duplicate or not the operation must compare to all elements it has already encountered.
-                        For this purpose it maintains some sort of data structure as its state. If you call distinct() on a parallel stream its state will be accessed concurrently by multiple worker threads, which requires some form of coordination or synchronisation, which adds overhead, which slows down parallel execution, up to the extent that parallel execution may be significantly slower than sequential execution.
+                        For this purpose it maintains some sort of data structure as its state.
+                        (IMP) If you call distinct() on a parallel stream its state will be accessed concurrently by multiple worker threads, which requires some form of coordination or synchronisation, which adds overhead, which slows down parallel execution, up to the extent that parallel execution may be significantly slower than sequential execution.
 
                         Suggestion: (IMP)
                         Even though these operations give correct results in parallel processing, it is advisable not to use them ON parallel stream.
@@ -550,7 +553,8 @@ Chapter 6   (Collecting data with streams)
         - Rule of Thumb:
         reduce's accumulator should never mutate the parameter that it is passed. If you want to do that use collect.
 
-        reduce should never mutate the parameter passed to it. It should just do some operation on parameters and return a new object. If you try to mutate parameter, it can give you wrong result or exception during parallel processing.
+        reduce should never mutate the parameter passed to it. It should just do some operation on parameters and return a new object.
+        If you try to mutate parameter, it can give you wrong result or exception during parallel processing.
         For mutating the parameter, you should use collect.
 
         WHY ????? (IMP)
@@ -1013,6 +1017,7 @@ Chapter 7 (Parallel data processing and performance)
 
             If you change above code to use parallel stream LongStream.rangeClosed(1, n).parallel().forEach(accumulator::add);,
             it will create problem. Each time to you run the code, it will give you different result.
+            You are trying to manipulate the same Accumulator object across many threads.
 
             Result: 5959989000692
             Result: 7425264100768
