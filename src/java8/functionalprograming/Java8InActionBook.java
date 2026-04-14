@@ -539,7 +539,7 @@ Chapter 6   (Collecting data with streams)
 
         how can i write Collectors.joining() by myself?
         String s = strings.stream()
-                          .collect(StringBuilder::new,
+                          .collect(() -> new StringBuilder(),
                                     (StringBuilder sb1, String s1) -> sb1.append(s1),
                                     (StringBuilder sb1, StringBuilder sb2) -> sb1.append(sb2)
                                   );
